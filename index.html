@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cat at Home — Reservas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --linen: #f7f2ec;
+        --parchment: #ede5d8;
+        --warm-white: #fdfaf6;
+        --clay: #a0624a;
+        --rust: #c17b5a;
+        --terracotta: #d4956a;
+        --sage: #7a9e7e;
+        --deep-sage: #4e7c55;
+        --bark: #2e2018;
+        --muted: #7a6a5a;
+        --border: rgba(160, 98, 74, 0.15);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background: var(--linen);
+        color: var(--bark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2.5rem 1rem 3rem;
+      }
+
+      /* ── HEADER ── */
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .header-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--terracotta);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .header-eyebrow::before,
+      .header-eyebrow::after {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 1px;
+        background: var(--terracotta);
+        opacity: 0.5;
+      }
+
+      header h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.8rem;
+        font-weight: 500;
+        color: var(--bark);
+        line-height: 1;
+        margin-bottom: 6px;
+        letter-spacing: 0.02em;
+      }
+
+      header h1 em {
+        font-style: italic;
+        color: var(--clay);
+      }
+
+      header p {
+        font-family: "Nunito", sans-serif;
+        font-size: 13px;
+        font-weight: 300;
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+
+      /* ── CHAT CONTAINER ── */
+      .chat-container {
+        width: 100%;
+        max-width: 620px;
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 68vh;
+        box-shadow: 0 2px 8px rgba(46, 32, 24, 0.06),
+          0 16px 48px rgba(46, 32, 24, 0.08);
+      }
+
+      /* ── CHAT HEADER BAR ── */
+      .chat-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.9rem 1.25rem;
+        background: var(--parchment);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .chat-bar-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--terracotta);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .chat-bar-info {
+        flex: 1;
+      }
+
+      .chat-bar-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--bark);
+        line-height: 1.2;
+      }
+
+      .chat-bar-status {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--deep-sage);
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .chat-bar-status::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--deep-sage);
+      }
+
+      /* ── MESSAGES ── */
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 4px;
+      }
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(160, 98, 74, 0.2);
+        border-radius: 4px;
+      }
+
+      .message {
+        max-width: 78%;
+        padding: 10px 14px;
+        font-size: 14px;
+        line-height: 1.65;
+        font-weight: 400;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .message.assistant {
+        background: var(--parchment);
+        border: 1px solid var(--border);
+        border-radius: 16px 16px 16px 4px;
+        align-self: flex-start;
+        color: var(--bark);
+      }
+
+      .message.user {
+        background: var(--clay);
+        color: #fff;
+        border-radius: 16px 16px 4px 16px;
+        align-self: flex-end;
+      }
+
+      /* ── TYPING INDICATOR ── */
+      .typing {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        padding: 12px 16px;
+        background: var(--parchment);
+        border: 1px solid var(--border);
+        border-radius: 16px 16px 16px 4px;
+        align-self: flex-start;
+        width: fit-content;
+      }
+
+      .typing span {
+        width: 6px;
+        height: 6px;
+        background: var(--terracotta);
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: bounce 1.2s infinite;
+      }
+      .typing span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      /* ── INPUT ── */
+      .chat-input {
+        display: flex;
+        gap: 8px;
+        padding: 0.9rem 1.1rem;
+        border-top: 1px solid var(--border);
+        background: var(--warm-white);
+      }
+
+      .chat-input input {
+        flex: 1;
+        padding: 10px 16px;
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        font-family: "Nunito", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--bark);
+        background: var(--linen);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .chat-input input::placeholder {
+        color: rgba(122, 106, 90, 0.5);
+      }
+
+      .chat-input input:focus {
+        border-color: rgba(160, 98, 74, 0.4);
+        box-shadow: 0 0 0 3px rgba(160, 98, 74, 0.08);
+      }
+
+      .chat-input button {
+        padding: 10px 20px;
+        background: var(--clay);
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: "Nunito", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        letter-spacing: 0.02em;
+      }
+
+      .chat-input button:hover {
+        background: var(--rust);
+        transform: translateY(-1px);
+      }
+      .chat-input button:active {
+        transform: translateY(0);
+      }
+      .chat-input button:disabled {
+        background: rgba(160, 98, 74, 0.3);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* ── FOOTER ── */
+      .footer-note {
+        margin-top: 1.25rem;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: rgba(122, 106, 90, 0.5);
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 480px) {
+        header h1 {
+          font-size: 2.2rem;
+        }
+        .chat-container {
+          height: 72vh;
+          border-radius: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-eyebrow">Montevideo, Uruguay</div>
+      <h1>Cat at <em>Home</em></h1>
+      <p>Cuidado de gatos a domicilio · Reservas online</p>
+    </header>
+
+    <div class="chat-container">
+      <div class="chat-bar">
+        <div class="chat-bar-avatar">🐱</div>
+        <div class="chat-bar-info">
+          <div class="chat-bar-name">Asistente de reservas</div>
+          <div class="chat-bar-status">en línea</div>
+        </div>
+      </div>
+      <div class="chat-messages" id="messages"></div>
+      <div class="chat-input">
+        <input
+          type="text"
+          id="input"
+          placeholder="Escribí tu mensaje..."
+          autocomplete="off"
+        />
+        <button id="sendBtn" onclick="sendMessage()">Enviar</button>
+      </div>
+    </div>
+
+    <p class="footer-note">Cat at Home · Sistema de reservas</p>
+
+    <script>
+      const messagesDiv = document.getElementById("messages");
+      const input = document.getElementById("input");
+      const sendBtn = document.getElementById("sendBtn");
+
+      function addMessage(text, role) {
+        const div = document.createElement("div");
+        div.classList.add("message", role);
+        div.textContent = text;
+        messagesDiv.appendChild(div);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function showTyping() {
+        const div = document.createElement("div");
+        div.classList.add("typing");
+        div.id = "typing";
+        div.innerHTML = "<span></span><span></span><span></span>";
+        messagesDiv.appendChild(div);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function hideTyping() {
+        const el = document.getElementById("typing");
+        if (el) el.remove();
+      }
+
+      async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        addMessage(text, "user");
+        input.value = "";
+        sendBtn.disabled = true;
+        showTyping();
+        try {
+          const res = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text }),
+          });
+          const data = await res.json();
+          hideTyping();
+          addMessage(data.response, "assistant");
+        } catch (e) {
+          hideTyping();
+          addMessage("Hubo un error. Intentá de nuevo.", "assistant");
+        }
+        sendBtn.disabled = false;
+        input.focus();
+      }
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+
+      async function init() {
+        showTyping();
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "__init__" }),
+        });
+        const data = await res.json();
+        hideTyping();
+        addMessage(data.response, "assistant");
+      }
+
+      init();
+    </script>
+  </body>
+</html>
