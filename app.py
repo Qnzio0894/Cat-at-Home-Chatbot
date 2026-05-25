@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from anthropic import Anthropic
 from dotenv import load_dotenv
 from tinydb import TinyDB, Query
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import os
 import json
 
@@ -14,8 +14,6 @@ db = TinyDB('db.json')
 reservas = db.table('reservas')
 bloqueados = db.table('bloqueados')
 
-from datetime import date
-
 def get_system_prompt():
     hoy = date.today().strftime("%d/%m/%Y")
     return f"""Sos el asistente virtual de Cat at Home, un servicio de cuidado de gatos a domicilio en Montevideo, Uruguay.
@@ -24,9 +22,10 @@ Tu tarea es recopilar la información necesaria para hacer una reserva de manera
 
 La información que necesitás recopilar es:
 1. Nombre y apellido del cliente
-2. Dirección donde se cuidará el gato
-3. Nombre del gato
-4. Fechas en las que se necesita el cuidado
+2. Teléfono de contacto del cliente
+3. Dirección donde se cuidará el gato
+4. Nombre del gato
+5. Fechas en las que se necesita el cuidado
 
 Una vez que tengas esos datos, preguntá orgánicamente por requerimientos especiales del gato, por ejemplo:
 - Alimentación (qué come, cuántas veces por día)
@@ -34,9 +33,12 @@ Una vez que tengas esos datos, preguntá orgánicamente por requerimientos espec
 - Comportamiento (si es sociable, asustadizo, etc.)
 - Cualquier otra cosa importante
 
-Cuando tengas toda la información, mostrá un resumen de confirmación y al final del mensaje incluí EXACTAMENTE este bloque JSON (sin markdown, sin backticks):
+Cuando tengas toda la información, mostrá un resumen de confirmación claro y cerrá con este mensaje exacto:
+"¡Listo! Tu reserva está registrada. Isabel se va a contactar con vos al número que nos dejaste para coordinar la entrega de llaves."
 
-RESERVA_JSON:{{"nombre":"...","direccion":"...","gato":"...","fechas":["YYYY-MM-DD"],"notas":"..."}}
+Al final del mensaje incluí EXACTAMENTE este bloque JSON (sin markdown, sin backticks):
+
+RESERVA_JSON:{{"nombre":"...","telefono":"...","direccion":"...","gato":"...","fechas":["YYYY-MM-DD"],"notas":"..."}}
 
 Respondé siempre en español, con un tono amigable y profesional. Hacé una pregunta a la vez."""
 
@@ -66,9 +68,6 @@ def get_disponibilidad(año, mes):
     Bloqueado = Query()
 
     for i in range(delta):
-        fecha = date(año, mes, primer_dia.day + i) if i == 0 else date(año, mes, 1).replace(day=1)
-        # Rebuild date correctly
-        from datetime import timedelta
         fecha = primer_dia + timedelta(days=i)
         fecha_str = fecha.strftime("%Y-%m-%d")
 

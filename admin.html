@@ -509,7 +509,9 @@
           const card = document.createElement("div");
           card.classList.add("reserva-card");
           card.innerHTML = `
-          <div class="reserva-fecha">${r.fecha || "Sin fecha"}</div>
+          <div class="reserva-fecha">${
+            r.fechas ? r.fechas.join(" · ") : "Sin fecha"
+          }</div>
           <div class="reserva-nombre">${r.nombre || "Sin nombre"}</div>
           <div class="reserva-detalle">${r.gato ? "🐱 " + r.gato : ""} ${
             r.direccion ? "· " + r.direccion : ""
